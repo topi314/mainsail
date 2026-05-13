@@ -189,6 +189,7 @@ export const getDefaultState = (): GuiState => {
             dashboardFilesFilter: ['new', 'failed', 'completed'],
             dashboardHistoryLimit: 5,
             hideOtherInstances: false,
+            dropToolMacro: '',
         },
         view: {
             afc: {

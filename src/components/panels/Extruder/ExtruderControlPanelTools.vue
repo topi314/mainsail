@@ -4,6 +4,20 @@
             <v-col>
                 <v-item-group class="_btn-group py-0 px-3">
                     <extruder-control-panel-tools-item v-for="macro in row" :key="macro" :name="macro" />
+                    <v-tooltip v-if="showDropToolButton && index === rows.length - 1" top>
+                        <template #activator="{ on, attrs }">
+                            <v-btn
+                                dense
+                                class="flex-grow-1 px-0 _drop-tool-btn"
+                                :disabled="printerIsPrintingOnly"
+                                v-bind="attrs"
+                                v-on="on"
+                                @click="runDropToolMacro">
+                                <v-icon small>{{ mdiEject }}</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>{{ dropToolMacroTooltip }}</span>
+                    </v-tooltip>
                 </v-item-group>
             </v-col>
         </v-row>
@@ -11,14 +25,14 @@
 </template>
 
 <script lang="ts">
-import { mdiPrinter3dNozzle } from '@mdi/js'
+import { mdiEject } from '@mdi/js'
 import { Component, Mixins } from 'vue-property-decorator'
 import BaseMixin from '@/components/mixins/base'
 import ControlMixin from '@/components/mixins/control'
 
 @Component({})
 export default class ExtruderControlPanel extends Mixins(BaseMixin, ControlMixin) {
-    mdiPrinter3dNozzle = mdiPrinter3dNozzle
+    mdiEject = mdiEject
 
     get rows() {
         const len = this.toolchangeMacros.length
@@ -30,6 +44,22 @@ export default class ExtruderControlPanel extends Mixins(BaseMixin, ControlMixin
         }
 
         return rows
+    }
+
+    get dropToolMacroName(): string {
+        return (this.$store.state.gui.uiSettings.dropToolMacro ?? '').trim()
+    }
+
+    get showDropToolButton(): boolean {
+        return this.dropToolMacroName.length > 0
+    }
+
+    get dropToolMacroTooltip(): string {
+        return this.$t('Settings.UiSettingsTab.DropToolTooltip', { macro: this.dropToolMacroName.toUpperCase() })
+    }
+
+    runDropToolMacro() {
+        this.doSend(this.dropToolMacroName.toUpperCase())
     }
 }
 </script>
@@ -65,6 +95,11 @@ export default class ExtruderControlPanel extends Mixins(BaseMixin, ControlMixin
 
     .v-btn:not(:first-child) {
         border-left-width: 0;
+    }
+
+    .v-btn._drop-tool-btn {
+        flex-grow: 0 !important;
+        min-width: 40px !important;
     }
 }
 

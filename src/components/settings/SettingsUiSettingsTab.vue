@@ -324,6 +324,20 @@
                 </settings-row>
                 <v-divider class="my-2" />
                 <settings-row
+                    :title="$t('Settings.UiSettingsTab.DropToolMacro')"
+                    :sub-title="$t('Settings.UiSettingsTab.DropToolMacroDescription')"
+                    :dynamic-slot-width="true">
+                    <v-text-field
+                        v-model="dropToolMacro"
+                        class="mt-0"
+                        hide-details="auto"
+                        outlined
+                        dense
+                        :placeholder="$t('Settings.UiSettingsTab.DropToolMacroPlaceholder')"
+                        :style="isMobile ? {} : { maxWidth: '320px' }" />
+                </settings-row>
+                <v-divider class="my-2" />
+                <settings-row
                     :title="$t('Settings.UiSettingsTab.HideOtherInstances')"
                     :sub-title="$t('Settings.UiSettingsTab.HideOtherInstancesDescription')"
                     :dynamic-slot-width="true">
@@ -711,6 +725,14 @@ export default class SettingsUiSettingsTab extends Mixins(BaseMixin, ThemeMixin)
 
     set hideOtherInstances(newVal) {
         this.$store.dispatch('gui/saveSetting', { name: 'uiSettings.hideOtherInstances', value: newVal })
+    }
+
+    get dropToolMacro() {
+        return this.$store.state.gui.uiSettings.dropToolMacro ?? ''
+    }
+
+    set dropToolMacro(newVal: string) {
+        this.$store.dispatch('gui/saveSetting', { name: 'uiSettings.dropToolMacro', value: newVal })
     }
 
     @Debounce(500)
